@@ -51,7 +51,7 @@ func TestMonitorsService_List(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -98,7 +98,7 @@ func TestMonitorsService_ListByStatus(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -118,7 +118,7 @@ func TestMonitorsService_Delete(t *testing.T) {
 		assert.Equal(t, http.MethodDelete, r.Method)
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"success": true}`))
+		_, _ = w.Write([]byte(`{"success": true}`))
 	}))
 	defer server.Close()
 
@@ -195,7 +195,7 @@ func TestMonitor_WithServiceAndGroup(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 

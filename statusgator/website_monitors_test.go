@@ -20,7 +20,7 @@ func TestWebsiteMonitorsService_Create(t *testing.T) {
 
 		body, _ := io.ReadAll(r.Body)
 		var req WebsiteMonitorRequest
-		json.Unmarshal(body, &req)
+		_ = json.Unmarshal(body, &req)
 		assert.Equal(t, "My Website", req.Name)
 		assert.Equal(t, "https://example.com", req.URL)
 
@@ -43,7 +43,7 @@ func TestWebsiteMonitorsService_Create(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -94,7 +94,7 @@ func TestWebsiteMonitorsService_Update(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -119,7 +119,7 @@ func TestWebsiteMonitorsService_Pause(t *testing.T) {
 		assert.Equal(t, http.MethodPost, r.Method)
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"success": true}`))
+		_, _ = w.Write([]byte(`{"success": true}`))
 	}))
 	defer server.Close()
 
@@ -136,7 +136,7 @@ func TestWebsiteMonitorsService_Unpause(t *testing.T) {
 		assert.Equal(t, http.MethodPost, r.Method)
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"success": true}`))
+		_, _ = w.Write([]byte(`{"success": true}`))
 	}))
 	defer server.Close()
 

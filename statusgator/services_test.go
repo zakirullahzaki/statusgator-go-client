@@ -40,7 +40,7 @@ func TestServicesService_List(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -80,7 +80,7 @@ func TestServicesService_Search(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -119,7 +119,7 @@ func TestServicesService_ListComponents(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 

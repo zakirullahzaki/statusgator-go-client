@@ -48,7 +48,7 @@ func TestUsersService_List(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 

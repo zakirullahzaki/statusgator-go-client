@@ -32,7 +32,7 @@ func TestMonitorGroupsService_List(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -65,7 +65,7 @@ func TestMonitorGroupsService_Get(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -86,7 +86,7 @@ func TestMonitorGroupsService_Create(t *testing.T) {
 
 		body, _ := io.ReadAll(r.Body)
 		var req MonitorGroupRequest
-		json.Unmarshal(body, &req)
+		_ = json.Unmarshal(body, &req)
 		assert.Equal(t, "New Group", req.Name)
 
 		response := `{
@@ -100,7 +100,7 @@ func TestMonitorGroupsService_Create(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -131,7 +131,7 @@ func TestMonitorGroupsService_Update(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -153,7 +153,7 @@ func TestMonitorGroupsService_Delete(t *testing.T) {
 		assert.Equal(t, http.MethodDelete, r.Method)
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"success": true}`))
+		_, _ = w.Write([]byte(`{"success": true}`))
 	}))
 	defer server.Close()
 
