@@ -22,10 +22,14 @@ func TestIncidentsService_List(t *testing.T) {
 			"data": [
 				{
 					"id": "inc123",
-					"title": "API Degradation",
+					"name": "API Degradation",
+					"details": "We are investigating reports of API issues",
 					"severity": "minor",
 					"phase": "investigating",
-					"monitor_ids": ["mon123"],
+					"board_id": "board123",
+					"scheduled_maintenance": false,
+					"resolved_or_completed": false,
+					"auto_complete_maintenance": false,
 					"created_at": "2024-01-15T14:30:00Z",
 					"updated_at": "2024-01-15T14:35:00Z"
 				}
@@ -51,10 +55,11 @@ func TestIncidentsService_List(t *testing.T) {
 	require.NoError(t, err)
 	assert.Len(t, incidents, 1)
 	assert.Equal(t, "inc123", incidents[0].ID)
-	assert.Equal(t, "API Degradation", incidents[0].Title)
+	assert.Equal(t, "API Degradation", incidents[0].Name)
+	assert.Equal(t, "We are investigating reports of API issues", incidents[0].Details)
 	assert.Equal(t, IncidentSeverityMinor, incidents[0].Severity)
 	assert.Equal(t, IncidentPhaseInvestigating, incidents[0].Phase)
-	assert.Equal(t, []string{"mon123"}, incidents[0].MonitorIDs)
+	assert.Equal(t, "board123", incidents[0].BoardID)
 	assert.Equal(t, 1, pagination.TotalCount)
 }
 
@@ -66,17 +71,21 @@ func TestIncidentsService_Create(t *testing.T) {
 		body, _ := io.ReadAll(r.Body)
 		var req IncidentRequest
 		_ = json.Unmarshal(body, &req)
-		assert.Equal(t, "Service Outage", req.Title)
+		assert.Equal(t, "Service Outage", req.Name)
 		assert.Equal(t, IncidentSeverityMajor, req.Severity)
 
 		response := `{
 			"success": true,
 			"data": {
 				"id": "inc456",
-				"title": "Service Outage",
+				"name": "Service Outage",
+				"details": "We are investigating reports of service issues",
 				"severity": "major",
 				"phase": "investigating",
-				"monitor_ids": ["mon123", "mon456"],
+				"board_id": "board123",
+				"scheduled_maintenance": false,
+				"resolved_or_completed": false,
+				"auto_complete_maintenance": false,
 				"created_at": "2024-01-15T15:00:00Z",
 				"updated_at": "2024-01-15T15:00:00Z"
 			}
@@ -91,18 +100,17 @@ func TestIncidentsService_Create(t *testing.T) {
 	require.NoError(t, err)
 
 	req := &IncidentRequest{
-		Title:      "Service Outage",
-		Message:    "We are investigating reports of service issues",
-		Severity:   IncidentSeverityMajor,
-		Phase:      IncidentPhaseInvestigating,
-		MonitorIDs: []string{"mon123", "mon456"},
+		Name:     "Service Outage",
+		Details:  "We are investigating reports of service issues",
+		Severity: IncidentSeverityMajor,
+		Phase:    IncidentPhaseInvestigating,
 	}
 
 	incident, err := client.Incidents.Create(context.Background(), "board123", req)
 
 	require.NoError(t, err)
 	assert.Equal(t, "inc456", incident.ID)
-	assert.Equal(t, "Service Outage", incident.Title)
+	assert.Equal(t, "Service Outage", incident.Name)
 	assert.Equal(t, IncidentSeverityMajor, incident.Severity)
 }
 
@@ -114,16 +122,20 @@ func TestIncidentsService_AddUpdate(t *testing.T) {
 		body, _ := io.ReadAll(r.Body)
 		var req IncidentUpdateRequest
 		_ = json.Unmarshal(body, &req)
-		assert.Equal(t, "Issue has been identified", req.Message)
+		assert.Equal(t, "Issue has been identified", req.Details)
 		assert.Equal(t, IncidentPhaseIdentified, req.Phase)
 
 		response := `{
 			"success": true,
 			"data": {
 				"id": "upd123",
-				"message": "Issue has been identified",
+				"incident_id": "inc123",
+				"details": "Issue has been identified",
 				"phase": "identified",
-				"created_at": "2024-01-15T15:30:00Z"
+				"severity": "major",
+				"notify_subscribers": true,
+				"created_at": "2024-01-15T15:30:00Z",
+				"updated_at": "2024-01-15T15:30:00Z"
 			}
 		}`
 
@@ -136,7 +148,7 @@ func TestIncidentsService_AddUpdate(t *testing.T) {
 	require.NoError(t, err)
 
 	req := &IncidentUpdateRequest{
-		Message: "Issue has been identified",
+		Details: "Issue has been identified",
 		Phase:   IncidentPhaseIdentified,
 	}
 
@@ -144,6 +156,7 @@ func TestIncidentsService_AddUpdate(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.Equal(t, "upd123", update.ID)
-	assert.Equal(t, "Issue has been identified", update.Message)
+	assert.Equal(t, "inc123", update.IncidentID)
+	assert.Equal(t, "Issue has been identified", update.Details)
 	assert.Equal(t, IncidentPhaseIdentified, update.Phase)
 }

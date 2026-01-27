@@ -61,7 +61,7 @@ func TestWebsiteMonitorsService_Create(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.Equal(t, "wm123", monitor.ID)
-	assert.Equal(t, "My Website", monitor.Name)
+	assert.Equal(t, "My Website", monitor.DisplayName)
 	assert.Equal(t, "https://example.com", monitor.URL)
 	assert.Equal(t, 1, monitor.CheckInterval)
 }
@@ -109,7 +109,7 @@ func TestWebsiteMonitorsService_Update(t *testing.T) {
 	monitor, err := client.WebsiteMonitors.Update(context.Background(), "board123", "wm123", req)
 
 	require.NoError(t, err)
-	assert.Equal(t, "Updated Website", monitor.Name)
+	assert.Equal(t, "Updated Website", monitor.DisplayName)
 	assert.Equal(t, 5, monitor.CheckInterval)
 }
 

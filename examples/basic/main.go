@@ -46,8 +46,8 @@ func main() {
 		}
 
 		for _, monitor := range monitors {
-			statusIcon := getStatusIcon(monitor.Status)
-			fmt.Printf("  %s %s [%s] - %s\n", statusIcon, monitor.Name, monitor.Type, monitor.Status)
+			statusIcon := getStatusIcon(monitor.FilteredStatus)
+			fmt.Printf("  %s %s [%s] - %s\n", statusIcon, monitor.DisplayName, monitor.MonitorType, monitor.FilteredStatus)
 		}
 	}
 

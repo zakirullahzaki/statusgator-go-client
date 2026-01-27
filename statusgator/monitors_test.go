@@ -63,9 +63,9 @@ func TestMonitorsService_List(t *testing.T) {
 	require.NoError(t, err)
 	assert.Len(t, monitors, 1)
 	assert.Equal(t, "mon123", monitors[0].ID)
-	assert.Equal(t, "API Health", monitors[0].Name)
-	assert.Equal(t, MonitorTypeWebsite, monitors[0].Type)
-	assert.Equal(t, MonitorStatusUp, monitors[0].Status)
+	assert.Equal(t, "API Health", monitors[0].DisplayName)
+	assert.Equal(t, MonitorTypeWebsite, monitors[0].MonitorType)
+	assert.Equal(t, MonitorStatusUp, monitors[0].FilteredStatus)
 	assert.False(t, monitors[0].IsPaused())
 	assert.Equal(t, 1, pagination.TotalCount)
 }
@@ -109,7 +109,7 @@ func TestMonitorsService_ListByStatus(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.Len(t, monitors, 1)
-	assert.Equal(t, MonitorStatusDown, monitors[0].Status)
+	assert.Equal(t, MonitorStatusDown, monitors[0].FilteredStatus)
 }
 
 func TestMonitorsService_Delete(t *testing.T) {
@@ -209,9 +209,9 @@ func TestMonitor_WithServiceAndGroup(t *testing.T) {
 
 	m := monitors[0]
 	assert.Equal(t, "mon789", m.ID)
-	assert.Equal(t, "Cloudflare", m.Name)
-	assert.Equal(t, MonitorTypeService, m.Type)
-	assert.Equal(t, MonitorStatusWarn, m.Status)
+	assert.Equal(t, "Cloudflare", m.DisplayName)
+	assert.Equal(t, MonitorTypeService, m.MonitorType)
+	assert.Equal(t, MonitorStatusWarn, m.FilteredStatus)
 	assert.Equal(t, MonitorStatusWarn, m.UnfilteredStatus)
 
 	require.NotNil(t, m.LastMessage)

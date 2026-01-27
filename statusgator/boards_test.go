@@ -156,10 +156,16 @@ func TestBoardsService_GetHistory(t *testing.T) {
 			"success": true,
 			"data": [
 				{
-					"timestamp": "2024-01-15T14:30:00Z",
-					"event": "Monitor down",
 					"monitor_id": "mon123",
-					"details": "Connection timeout"
+					"name": "API Service",
+					"icon_url": "https://example.com/icon.png",
+					"status": "down",
+					"started_at": "2024-01-15T14:30:00Z",
+					"ended_at": "2024-01-15T15:00:00Z",
+					"duration": "30.0",
+					"message": "Service unavailable",
+					"details": "Connection timeout",
+					"early_warning_signal": false
 				}
 			]
 		}`
@@ -180,8 +186,10 @@ func TestBoardsService_GetHistory(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.Len(t, history, 1)
-	assert.Equal(t, "Monitor down", history[0].Event)
 	assert.Equal(t, "mon123", history[0].MonitorID)
+	assert.Equal(t, "API Service", history[0].Name)
+	assert.Equal(t, MonitorStatusDown, history[0].Status)
+	assert.Equal(t, "Connection timeout", history[0].Details)
 }
 
 func TestBoardsService_ListAll(t *testing.T) {

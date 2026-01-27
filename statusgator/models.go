@@ -39,12 +39,13 @@ type GroupInfo struct {
 	Position int    `json:"position"`
 }
 
-// Monitor represents a base monitor structure with all fields from API v3.
+// Monitor represents a monitor from the API v3 /boards/{id}/monitors endpoint.
+// Field names match the actual API response exactly.
 type Monitor struct {
 	ID                 string         `json:"id"`
-	Name               string         `json:"display_name"`
-	Type               MonitorType    `json:"monitor_type"`
-	Status             MonitorStatus  `json:"filtered_status"`
+	DisplayName        string         `json:"display_name"`
+	MonitorType        MonitorType    `json:"monitor_type"`
+	FilteredStatus     MonitorStatus  `json:"filtered_status"`
 	UnfilteredStatus   MonitorStatus  `json:"unfiltered_status"`
 	Description        *string        `json:"description,omitempty"`
 	LastMessage        *string        `json:"last_message,omitempty"`
@@ -56,7 +57,7 @@ type Monitor struct {
 	CheckedAt          *time.Time     `json:"checked_at,omitempty"`
 	FilterCount        int            `json:"filter_count"`
 	IconURL            string         `json:"icon_url"`
-	Position           int            `json:"position"`
+	Position           *int           `json:"position,omitempty"`
 	EarlyWarningSignal bool           `json:"early_warning_signal"`
 	Service            *ServiceInfo   `json:"service,omitempty"`
 	Group              *GroupInfo     `json:"group,omitempty"`
@@ -72,17 +73,22 @@ func (m *Monitor) IsPaused() bool {
 // WebsiteMonitor represents a website HTTP monitor.
 type WebsiteMonitor struct {
 	Monitor
-	URL             string            `json:"url"`
-	CheckInterval   int               `json:"check_interval"`
-	HTTPMethod      string            `json:"http_method"`
-	ExpectedStatus  int               `json:"expected_status"`
-	ContentMatch    string            `json:"content_match,omitempty"`
-	Headers         map[string]string `json:"headers,omitempty"`
-	BasicAuthUser   string            `json:"basic_auth_user,omitempty"`
-	BasicAuthPass   string            `json:"basic_auth_pass,omitempty"`
-	Timeout         int               `json:"timeout"`
-	FollowRedirects bool              `json:"follow_redirects"`
-	Regions         []string          `json:"regions,omitempty"`
+	URL              string   `json:"url"`
+	CheckInterval    int      `json:"check_interval"`
+	HTTPMethod       string   `json:"http_method"`
+	CheckContent     bool     `json:"check_content"`
+	Content          string   `json:"content,omitempty"`
+	AlertContentFound bool    `json:"alert_content_found"`
+	CheckRegions     []string `json:"check_regions,omitempty"`
+	AlertAnyLocation bool     `json:"alert_any_location"`
+	ResponseCodes    []int    `json:"response_codes,omitempty"`
+	FollowRedirects  bool     `json:"follow_redirects"`
+	Timeout          int      `json:"timeout"`
+	RetryCount       int      `json:"retry_count"`
+	RequestBody      string   `json:"request_body,omitempty"`
+	HTTPAuthUsername string   `json:"http_auth_username,omitempty"`
+	HTTPAuthPassword string   `json:"http_auth_password,omitempty"`
+	RequestHeaders   []string `json:"request_headers,omitempty"`
 }
 
 // WebsiteMonitorRequest represents a request to create/update a website monitor.
@@ -227,42 +233,58 @@ const (
 )
 
 // Incident represents an incident or maintenance window.
+// Matches the actual API response from /boards/{id}/incidents endpoint.
 type Incident struct {
-	ID           string           `json:"id"`
-	Title        string           `json:"title"`
-	Severity     IncidentSeverity `json:"severity"`
-	Phase        IncidentPhase    `json:"phase"`
-	MonitorIDs   []string         `json:"monitor_ids"`
-	Updates      []IncidentUpdate `json:"updates,omitempty"`
-	ScheduledFor *time.Time       `json:"scheduled_for,omitempty"`
-	ScheduledEnd *time.Time       `json:"scheduled_end,omitempty"`
-	CreatedAt    time.Time        `json:"created_at"`
-	UpdatedAt    time.Time        `json:"updated_at"`
+	ID                      string           `json:"id"`
+	Name                    string           `json:"name"`
+	Details                 string           `json:"details"`
+	Severity                IncidentSeverity `json:"severity"`
+	Phase                   IncidentPhase    `json:"phase"`
+	StartedAt               *time.Time       `json:"started_at,omitempty"`
+	ResolvedAt              *time.Time       `json:"resolved_at,omitempty"`
+	WillStartAt             *time.Time       `json:"will_start_at,omitempty"`
+	WillEndAt               *time.Time       `json:"will_end_at,omitempty"`
+	AutoCompleteMaintenance bool             `json:"auto_complete_maintenance"`
+	BoardID                 string           `json:"board_id"`
+	Duration                *string          `json:"duration,omitempty"`
+	MaintenanceDuration     *string          `json:"maintenance_duration,omitempty"`
+	ScheduledMaintenance    bool             `json:"scheduled_maintenance"`
+	ResolvedOrCompleted     bool             `json:"resolved_or_completed"`
+	CreatedAt               time.Time        `json:"created_at"`
+	UpdatedAt               time.Time        `json:"updated_at"`
 }
 
 // IncidentUpdate represents an update to an incident.
+// Matches the actual API response from incident_updates endpoint.
 type IncidentUpdate struct {
-	ID        string        `json:"id"`
-	Message   string        `json:"message"`
-	Phase     IncidentPhase `json:"phase"`
-	CreatedAt time.Time     `json:"created_at"`
+	ID                string           `json:"id"`
+	IncidentID        string           `json:"incident_id"`
+	Details           string           `json:"details"`
+	Phase             IncidentPhase    `json:"phase"`
+	Severity          IncidentSeverity `json:"severity"`
+	PostedAt          *time.Time       `json:"posted_at,omitempty"`
+	NotifySubscribers bool             `json:"notify_subscribers"`
+	CreatedAt         time.Time        `json:"created_at"`
+	UpdatedAt         time.Time        `json:"updated_at"`
 }
 
 // IncidentRequest represents a request to create an incident.
 type IncidentRequest struct {
-	Title        string           `json:"title"`
-	Message      string           `json:"message"`
-	Severity     IncidentSeverity `json:"severity"`
-	Phase        IncidentPhase    `json:"phase,omitempty"`
-	MonitorIDs   []string         `json:"monitor_ids"`
-	ScheduledFor *time.Time       `json:"scheduled_for,omitempty"`
-	ScheduledEnd *time.Time       `json:"scheduled_end,omitempty"`
+	Name                    string           `json:"name"`
+	Details                 string           `json:"details"`
+	Severity                IncidentSeverity `json:"severity"`
+	Phase                   IncidentPhase    `json:"phase,omitempty"`
+	WillStartAt             *time.Time       `json:"will_start_at,omitempty"`
+	WillEndAt               *time.Time       `json:"will_end_at,omitempty"`
+	AutoCompleteMaintenance *bool            `json:"auto_complete_maintenance,omitempty"`
 }
 
-// IncidentUpdateRequest represents a request to update an incident.
+// IncidentUpdateRequest represents a request to add an update to an incident.
 type IncidentUpdateRequest struct {
-	Message string        `json:"message"`
-	Phase   IncidentPhase `json:"phase"`
+	Details           string           `json:"details"`
+	Phase             IncidentPhase    `json:"phase,omitempty"`
+	Severity          IncidentSeverity `json:"severity,omitempty"`
+	NotifySubscribers *bool            `json:"notify_subscribers,omitempty"`
 }
 
 // Service represents an external service that can be monitored.
@@ -280,11 +302,15 @@ type Service struct {
 }
 
 // Subscriber represents a status page email subscriber.
+// Matches the actual API response from status_page_subscribers endpoint.
 type Subscriber struct {
-	ID        string    `json:"id"`
-	Email     string    `json:"email"`
-	Confirmed bool      `json:"confirmed"`
-	CreatedAt time.Time `json:"created_at"`
+	ID          string     `json:"id"`
+	Email       string     `json:"email"`
+	Confirmed   bool       `json:"confirmed"`
+	ConfirmedAt *time.Time `json:"confirmed_at,omitempty"`
+	MonitorIDs  []string   `json:"monitor_ids,omitempty"`
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   time.Time  `json:"updated_at"`
 }
 
 // SubscriberRequest represents a request to add a subscriber.
@@ -329,12 +355,19 @@ type Region struct {
 	Color     string `json:"color"`
 }
 
-// HistoryEvent represents a historical status event.
+// HistoryEvent represents a historical status event from board history.
+// Matches the actual API response from /boards/{id}/history endpoint.
 type HistoryEvent struct {
-	Timestamp time.Time `json:"timestamp"`
-	Event     string    `json:"event"`
-	MonitorID string    `json:"monitor_id"`
-	Details   string    `json:"details"`
+	MonitorID          string        `json:"monitor_id"`
+	Name               string        `json:"name"`
+	IconURL            string        `json:"icon_url"`
+	Status             MonitorStatus `json:"status"`
+	StartedAt          time.Time     `json:"started_at"`
+	EndedAt            *time.Time    `json:"ended_at,omitempty"`
+	Duration           string        `json:"duration"`
+	Message            string        `json:"message"`
+	Details            string        `json:"details"`
+	EarlyWarningSignal bool          `json:"early_warning_signal"`
 }
 
 // HistoryOptions specifies filters for history queries.
