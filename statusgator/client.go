@@ -137,7 +137,7 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body io.Rea
 	if err != nil {
 		return nil, fmt.Errorf("executing request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	limitedReader := io.LimitReader(resp.Body, DefaultMaxResponseSize+1)
 	respBody, err := io.ReadAll(limitedReader)

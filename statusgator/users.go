@@ -10,7 +10,8 @@ import (
 type UsersService service
 
 type usersResponse struct {
-	Users []User `json:"users"`
+	Success bool   `json:"success"`
+	Data    []User `json:"data"`
 }
 
 // List returns all organization users.
@@ -25,5 +26,5 @@ func (s *UsersService) List(ctx context.Context) ([]User, error) {
 		return nil, fmt.Errorf("decoding response: %w", err)
 	}
 
-	return resp.Users, nil
+	return resp.Data, nil
 }

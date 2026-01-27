@@ -19,24 +19,32 @@ func TestRegionsService_List(t *testing.T) {
 			"success": true,
 			"data": [
 				{
-					"id": "region123",
-					"name": "US East",
+					"region_id": "us-east",
+					"dns_name": "monitor-us-east.statusgator.com",
+					"ip_address": "34.230.98.138",
+					"provider": "AWS",
 					"code": "us-east-1",
-					"ip_addresses": ["1.2.3.4", "5.6.7.8"],
-					"dns_names": ["us-east.monitor.example.com"]
+					"name": "US East",
+					"desc": "US East (N. Virginia)",
+					"icon_url": "https://example.com/aws.png",
+					"color": "#1a5db2"
 				},
 				{
-					"id": "region456",
-					"name": "EU West",
+					"region_id": "eu-west",
+					"dns_name": "monitor-eu-west.statusgator.com",
+					"ip_address": "34.250.135.124",
+					"provider": "AWS",
 					"code": "eu-west-1",
-					"ip_addresses": ["10.20.30.40"],
-					"dns_names": ["eu-west.monitor.example.com"]
+					"name": "EU West",
+					"desc": "Europe (Ireland)",
+					"icon_url": "https://example.com/aws.png",
+					"color": "#a66f00"
 				}
 			]
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -48,11 +56,14 @@ func TestRegionsService_List(t *testing.T) {
 	require.NoError(t, err)
 	assert.Len(t, regions, 2)
 
-	assert.Equal(t, "region123", regions[0].ID)
+	assert.Equal(t, "us-east", regions[0].RegionID)
 	assert.Equal(t, "US East", regions[0].Name)
 	assert.Equal(t, "us-east-1", regions[0].Code)
-	assert.Equal(t, []string{"1.2.3.4", "5.6.7.8"}, regions[0].IPAddrs)
-	assert.Equal(t, []string{"us-east.monitor.example.com"}, regions[0].DNSNames)
+	assert.Equal(t, "US East (N. Virginia)", regions[0].Desc)
+	assert.Equal(t, "AWS", regions[0].Provider)
+	assert.Equal(t, "monitor-us-east.statusgator.com", regions[0].DNSName)
+	assert.Equal(t, "34.230.98.138", regions[0].IPAddress)
+	assert.Equal(t, "#1a5db2", regions[0].Color)
 
 	assert.Equal(t, "EU West", regions[1].Name)
 }

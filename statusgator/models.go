@@ -17,10 +17,10 @@ const (
 type MonitorType string
 
 const (
-	MonitorTypeWebsite MonitorType = "website"
-	MonitorTypePing    MonitorType = "ping"
-	MonitorTypeService MonitorType = "service"
-	MonitorTypeCustom  MonitorType = "custom"
+	MonitorTypeWebsite MonitorType = "WebsiteMonitor"
+	MonitorTypePing    MonitorType = "PingMonitor"
+	MonitorTypeService MonitorType = "ServiceMonitor"
+	MonitorTypeCustom  MonitorType = "CustomMonitor"
 )
 
 // Board represents a StatusGator dashboard.
@@ -32,16 +32,41 @@ type Board struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-// Monitor represents a base monitor structure.
+// GroupInfo represents nested group information in a monitor response.
+type GroupInfo struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	Position int    `json:"position"`
+}
+
+// Monitor represents a base monitor structure with all fields from API v3.
 type Monitor struct {
-	ID        string        `json:"id"`
-	Name      string        `json:"name"`
-	Type      MonitorType   `json:"type"`
-	Status    MonitorStatus `json:"status"`
-	Paused    bool          `json:"paused"`
-	GroupID   *string       `json:"group_id,omitempty"`
-	CreatedAt time.Time     `json:"created_at"`
-	UpdatedAt time.Time     `json:"updated_at"`
+	ID                 string         `json:"id"`
+	Name               string         `json:"display_name"`
+	Type               MonitorType    `json:"monitor_type"`
+	Status             MonitorStatus  `json:"filtered_status"`
+	UnfilteredStatus   MonitorStatus  `json:"unfiltered_status"`
+	Description        *string        `json:"description,omitempty"`
+	LastMessage        *string        `json:"last_message,omitempty"`
+	LastDetails        *string        `json:"last_details,omitempty"`
+	OverriddenMessage  *string        `json:"overridden_message,omitempty"`
+	OverriddenStatus   *MonitorStatus `json:"overridden_status,omitempty"`
+	OverridesLockedAt  *time.Time     `json:"overrides_locked_at,omitempty"`
+	PausedAt           *time.Time     `json:"paused_at,omitempty"`
+	CheckedAt          *time.Time     `json:"checked_at,omitempty"`
+	FilterCount        int            `json:"filter_count"`
+	IconURL            string         `json:"icon_url"`
+	Position           int            `json:"position"`
+	EarlyWarningSignal bool           `json:"early_warning_signal"`
+	Service            *ServiceInfo   `json:"service,omitempty"`
+	Group              *GroupInfo     `json:"group,omitempty"`
+	CreatedAt          time.Time      `json:"created_at"`
+	UpdatedAt          time.Time      `json:"updated_at"`
+}
+
+// IsPaused returns true if the monitor is currently paused.
+func (m *Monitor) IsPaused() bool {
+	return m.PausedAt != nil
 }
 
 // WebsiteMonitor represents a website HTTP monitor.
@@ -80,25 +105,54 @@ type WebsiteMonitorRequest struct {
 // PingMonitor represents a ping/ICMP monitor.
 type PingMonitor struct {
 	Monitor
-	Host          string   `json:"host"`
-	CheckInterval int      `json:"check_interval"`
-	Regions       []string `json:"regions,omitempty"`
+	Address  string   `json:"address"`
+	Interval int      `json:"interval"`
+	Timeout  int      `json:"timeout"`
+	Regions  []string `json:"regions,omitempty"`
 }
 
 // PingMonitorRequest represents a request to create/update a ping monitor.
 type PingMonitorRequest struct {
-	Name          string   `json:"name,omitempty"`
-	Host          string   `json:"host,omitempty"`
-	CheckInterval int      `json:"check_interval,omitempty"`
-	Regions       []string `json:"regions,omitempty"`
-	GroupID       string   `json:"group_id,omitempty"`
+	Name     string   `json:"name,omitempty"`
+	Address  string   `json:"address,omitempty"`
+	Interval int      `json:"interval,omitempty"`
+	Timeout  int      `json:"timeout,omitempty"`
+	Regions  []string `json:"regions,omitempty"`
+	GroupID  string   `json:"group_id,omitempty"`
+}
+
+// ServiceInfo represents nested service information in a monitor response.
+type ServiceInfo struct {
+	ID             string `json:"id"`
+	Name           string `json:"name"`
+	Slug           string `json:"slug"`
+	HomePageURL    string `json:"home_page_url"`
+	StatusPageURL  string `json:"status_page_url"`
+	IconURL        string `json:"icon_url"`
+	LandingPageURL string `json:"landing_page_url"`
+	Official       bool   `json:"official"`
 }
 
 // ServiceMonitor represents a subscription to an external status page.
 type ServiceMonitor struct {
 	Monitor
-	ServiceID   string `json:"service_id"`
-	ServiceName string `json:"service_name"`
+	Service *ServiceInfo `json:"service,omitempty"`
+}
+
+// GetServiceID returns the service ID from the nested service object.
+func (sm *ServiceMonitor) GetServiceID() string {
+	if sm.Service != nil {
+		return sm.Service.ID
+	}
+	return ""
+}
+
+// GetServiceName returns the service name from the nested service object.
+func (sm *ServiceMonitor) GetServiceName() string {
+	if sm.Service != nil {
+		return sm.Service.Name
+	}
+	return ""
 }
 
 // ServiceMonitorRequest represents a request to create/update a service monitor.
@@ -111,7 +165,6 @@ type ServiceMonitorRequest struct {
 // CustomMonitor represents a manually-managed monitor.
 type CustomMonitor struct {
 	Monitor
-	Description string `json:"description,omitempty"`
 }
 
 // CustomMonitorRequest represents a request to create/update a custom monitor.
@@ -214,12 +267,16 @@ type IncidentUpdateRequest struct {
 
 // Service represents an external service that can be monitored.
 type Service struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Slug      string    `json:"slug"`
-	StatusURL string    `json:"status_url"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID             string    `json:"id"`
+	Name           string    `json:"name"`
+	Slug           string    `json:"slug"`
+	HomePageURL    string    `json:"home_page_url"`
+	StatusPageURL  string    `json:"status_page_url"`
+	IconURL        string    `json:"icon_url"`
+	LandingPageURL string    `json:"landing_page_url"`
+	Official       bool      `json:"official"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
 }
 
 // Subscriber represents a status page email subscriber.
@@ -238,19 +295,38 @@ type SubscriberRequest struct {
 
 // User represents an organization user.
 type User struct {
-	ID    string `json:"id"`
-	Email string `json:"email"`
-	Name  string `json:"name"`
-	Role  string `json:"role"`
+	ID               string     `json:"id"`
+	Email            string     `json:"email"`
+	FirstName        string     `json:"first_name"`
+	LastName         string     `json:"last_name"`
+	Company          string     `json:"company"`
+	JobTitle         *string    `json:"job_title,omitempty"`
+	Role             string     `json:"role"`
+	Confirmed        bool       `json:"confirmed"`
+	TwoFactorEnabled bool       `json:"two_factor_enabled"`
+	CreatedAt        time.Time  `json:"created_at"`
+	LastSignInAt     *time.Time `json:"last_sign_in_at,omitempty"`
+}
+
+// FullName returns user's full name.
+func (u *User) FullName() string {
+	if u.LastName != "" {
+		return u.FirstName + " " + u.LastName
+	}
+	return u.FirstName
 }
 
 // Region represents a geographic monitoring region.
 type Region struct {
-	ID       string   `json:"id"`
-	Name     string   `json:"name"`
-	Code     string   `json:"code"`
-	IPAddrs  []string `json:"ip_addresses"`
-	DNSNames []string `json:"dns_names"`
+	RegionID  string `json:"region_id"`
+	Name      string `json:"name"`
+	Code      string `json:"code"`
+	Desc      string `json:"desc"`
+	Provider  string `json:"provider"`
+	DNSName   string `json:"dns_name"`
+	IPAddress string `json:"ip_address"`
+	IconURL   string `json:"icon_url"`
+	Color     string `json:"color"`
 }
 
 // HistoryEvent represents a historical status event.

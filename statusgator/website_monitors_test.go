@@ -20,7 +20,7 @@ func TestWebsiteMonitorsService_Create(t *testing.T) {
 
 		body, _ := io.ReadAll(r.Body)
 		var req WebsiteMonitorRequest
-		json.Unmarshal(body, &req)
+		_ = json.Unmarshal(body, &req)
 		assert.Equal(t, "My Website", req.Name)
 		assert.Equal(t, "https://example.com", req.URL)
 
@@ -28,10 +28,11 @@ func TestWebsiteMonitorsService_Create(t *testing.T) {
 			"success": true,
 			"data": {
 				"id": "wm123",
-				"name": "My Website",
-				"type": "website",
-				"status": "unknown",
-				"paused": false,
+				"display_name": "My Website",
+				"monitor_type": "WebsiteMonitor",
+				"filtered_status": "unknown",
+				"unfiltered_status": "unknown",
+				"paused_at": null,
 				"url": "https://example.com",
 				"check_interval": 1,
 				"http_method": "GET",
@@ -42,7 +43,7 @@ func TestWebsiteMonitorsService_Create(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -83,16 +84,17 @@ func TestWebsiteMonitorsService_Update(t *testing.T) {
 			"success": true,
 			"data": {
 				"id": "wm123",
-				"name": "Updated Website",
-				"type": "website",
-				"status": "up",
+				"display_name": "Updated Website",
+				"monitor_type": "WebsiteMonitor",
+				"filtered_status": "up",
+				"unfiltered_status": "up",
 				"url": "https://example.com",
 				"check_interval": 5
 			}
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -117,7 +119,7 @@ func TestWebsiteMonitorsService_Pause(t *testing.T) {
 		assert.Equal(t, http.MethodPost, r.Method)
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"success": true}`))
+		_, _ = w.Write([]byte(`{"success": true}`))
 	}))
 	defer server.Close()
 
@@ -134,7 +136,7 @@ func TestWebsiteMonitorsService_Unpause(t *testing.T) {
 		assert.Equal(t, http.MethodPost, r.Method)
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"success": true}`))
+		_, _ = w.Write([]byte(`{"success": true}`))
 	}))
 	defer server.Close()
 

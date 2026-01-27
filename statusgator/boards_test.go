@@ -38,7 +38,7 @@ func TestBoardsService_List(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -76,7 +76,7 @@ func TestBoardsService_ListWithPagination(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -108,7 +108,7 @@ func TestBoardsService_Get(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -133,7 +133,7 @@ func TestBoardsService_Get_EmptyID(t *testing.T) {
 func TestBoardsService_Get_NotFound(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"message": "Board not found"}`))
+		_, _ = w.Write([]byte(`{"message": "Board not found"}`))
 	}))
 	defer server.Close()
 
@@ -165,7 +165,7 @@ func TestBoardsService_GetHistory(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -219,7 +219,7 @@ func TestBoardsService_ListAll(t *testing.T) {
 		}
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 

@@ -39,7 +39,7 @@ func TestIncidentsService_List(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -65,7 +65,7 @@ func TestIncidentsService_Create(t *testing.T) {
 
 		body, _ := io.ReadAll(r.Body)
 		var req IncidentRequest
-		json.Unmarshal(body, &req)
+		_ = json.Unmarshal(body, &req)
 		assert.Equal(t, "Service Outage", req.Title)
 		assert.Equal(t, IncidentSeverityMajor, req.Severity)
 
@@ -83,7 +83,7 @@ func TestIncidentsService_Create(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -113,7 +113,7 @@ func TestIncidentsService_AddUpdate(t *testing.T) {
 
 		body, _ := io.ReadAll(r.Body)
 		var req IncidentUpdateRequest
-		json.Unmarshal(body, &req)
+		_ = json.Unmarshal(body, &req)
 		assert.Equal(t, "Issue has been identified", req.Message)
 		assert.Equal(t, IncidentPhaseIdentified, req.Phase)
 
@@ -128,7 +128,7 @@ func TestIncidentsService_AddUpdate(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 

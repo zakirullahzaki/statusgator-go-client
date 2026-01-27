@@ -72,7 +72,7 @@ func TestClient_Ping(t *testing.T) {
 		assert.Equal(t, "application/json", r.Header.Get("Accept"))
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"success": true}`))
+		_, _ = w.Write([]byte(`{"success": true}`))
 	}))
 	defer server.Close()
 
@@ -86,7 +86,7 @@ func TestClient_Ping(t *testing.T) {
 func TestClient_PingUnauthorized(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte(`{"message": "Invalid token"}`))
+		_, _ = w.Write([]byte(`{"message": "Invalid token"}`))
 	}))
 	defer server.Close()
 
@@ -103,7 +103,7 @@ func TestClient_ResponseTooLarge(t *testing.T) {
 		// Write more than DefaultMaxResponseSize
 		largeResponse := make([]byte, DefaultMaxResponseSize+100)
 		w.WriteHeader(http.StatusOK)
-		w.Write(largeResponse)
+		_, _ = w.Write(largeResponse)
 	}))
 	defer server.Close()
 
@@ -133,9 +133,3 @@ func TestClient_ServicesInitialized(t *testing.T) {
 	assert.NotNil(t, client.Regions)
 }
 
-func setupTestClient(t *testing.T, handler http.HandlerFunc) (*Client, *httptest.Server) {
-	server := httptest.NewServer(handler)
-	client, err := NewClient("test-token", WithBaseURL(server.URL))
-	require.NoError(t, err)
-	return client, server
-}

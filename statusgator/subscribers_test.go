@@ -36,7 +36,7 @@ func TestSubscribersService_List(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -60,7 +60,7 @@ func TestSubscribersService_Add(t *testing.T) {
 
 		body, _ := io.ReadAll(r.Body)
 		var req SubscriberRequest
-		json.Unmarshal(body, &req)
+		_ = json.Unmarshal(body, &req)
 		assert.Equal(t, "new@example.com", req.Email)
 		assert.True(t, req.SkipConfirmation)
 
@@ -75,7 +75,7 @@ func TestSubscribersService_Add(t *testing.T) {
 		}`
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(response))
+		_, _ = w.Write([]byte(response))
 	}))
 	defer server.Close()
 
@@ -102,7 +102,7 @@ func TestSubscribersService_DeleteByID(t *testing.T) {
 		assert.Equal(t, "sub123", r.URL.Query().Get("id"))
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"success": true}`))
+		_, _ = w.Write([]byte(`{"success": true}`))
 	}))
 	defer server.Close()
 
@@ -120,7 +120,7 @@ func TestSubscribersService_DeleteByEmail(t *testing.T) {
 		assert.Equal(t, "user@example.com", r.URL.Query().Get("email"))
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"success": true}`))
+		_, _ = w.Write([]byte(`{"success": true}`))
 	}))
 	defer server.Close()
 
