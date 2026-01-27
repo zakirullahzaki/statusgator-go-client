@@ -2,8 +2,13 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/arslanbekov/statusgator-go-client.svg)](https://pkg.go.dev/github.com/arslanbekov/statusgator-go-client)
 [![Go Report Card](https://goreportcard.com/badge/github.com/arslanbekov/statusgator-go-client)](https://goreportcard.com/report/github.com/arslanbekov/statusgator-go-client)
+[![CI](https://github.com/arslanbekov/statusgator-go-client/actions/workflows/ci.yml/badge.svg)](https://github.com/arslanbekov/statusgator-go-client/actions/workflows/ci.yml)
 
 Go client library for [StatusGator API V3](https://statusgator.com/api/v3/docs).
+
+## What is StatusGator?
+
+[StatusGator](https://statusgator.com) is a status page aggregator that monitors the status of cloud services and third-party providers your business depends on. It aggregates status information from hundreds of services (AWS, GitHub, Stripe, Cloudflare, etc.) into a single dashboard, sends alerts when outages occur, and helps teams quickly identify if external dependencies are causing issues. StatusGator also allows you to create your own status pages and monitor custom endpoints.
 
 ## Installation
 
@@ -46,7 +51,7 @@ func main() {
 
 ## Authentication
 
-Get your API token from the [StatusGator dashboard](https://statusgator.com). Pass it to `NewClient`:
+Get your API token from the [StatusGator dashboard](https://statusgator.com/api_tokens). Pass it to `NewClient`:
 
 ```go
 client, err := statusgator.NewClient("your-api-token")
