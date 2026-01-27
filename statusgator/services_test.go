@@ -22,7 +22,11 @@ func TestServicesService_List(t *testing.T) {
 					"id": "svc123",
 					"name": "GitHub",
 					"slug": "github",
-					"status_url": "https://www.githubstatus.com",
+					"home_page_url": "https://github.com",
+					"status_page_url": "https://www.githubstatus.com",
+					"icon_url": "https://example.com/github-icon.png",
+					"landing_page_url": "https://statusgator.com/services/github",
+					"official": true,
 					"created_at": "2024-01-01T00:00:00Z",
 					"updated_at": "2024-01-15T12:00:00Z"
 				}
@@ -50,7 +54,11 @@ func TestServicesService_List(t *testing.T) {
 	assert.Equal(t, "svc123", services[0].ID)
 	assert.Equal(t, "GitHub", services[0].Name)
 	assert.Equal(t, "github", services[0].Slug)
-	assert.Equal(t, "https://www.githubstatus.com", services[0].StatusURL)
+	assert.Equal(t, "https://www.githubstatus.com", services[0].StatusPageURL)
+	assert.Equal(t, "https://github.com", services[0].HomePageURL)
+	assert.Equal(t, "https://example.com/github-icon.png", services[0].IconURL)
+	assert.Equal(t, "https://statusgator.com/services/github", services[0].LandingPageURL)
+	assert.True(t, services[0].Official)
 	assert.Equal(t, 1, pagination.TotalCount)
 }
 
@@ -66,7 +74,7 @@ func TestServicesService_Search(t *testing.T) {
 					"id": "svc456",
 					"name": "AWS",
 					"slug": "aws",
-					"status_url": "https://health.aws.amazon.com"
+					"status_page_url": "https://health.aws.amazon.com"
 				}
 			]
 		}`

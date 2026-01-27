@@ -58,7 +58,7 @@ func main() {
 		log.Printf("Failed to list regions: %v", err)
 	} else {
 		for _, region := range regions {
-			fmt.Printf("  %s (%s)\n", region.Name, region.Code)
+			fmt.Printf("  %s (%s) - %s\n", region.Name, region.Code, region.Provider)
 		}
 	}
 
@@ -69,7 +69,7 @@ func main() {
 		log.Printf("Failed to list users: %v", err)
 	} else {
 		for _, user := range users {
-			fmt.Printf("  %s <%s> - %s\n", user.Name, user.Email, user.Role)
+			fmt.Printf("  %s <%s> - %s\n", user.FullName(), user.Email, user.Role)
 		}
 	}
 }

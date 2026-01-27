@@ -28,10 +28,11 @@ func TestWebsiteMonitorsService_Create(t *testing.T) {
 			"success": true,
 			"data": {
 				"id": "wm123",
-				"name": "My Website",
-				"type": "website",
-				"status": "unknown",
-				"paused": false,
+				"display_name": "My Website",
+				"monitor_type": "WebsiteMonitor",
+				"filtered_status": "unknown",
+				"unfiltered_status": "unknown",
+				"paused_at": null,
 				"url": "https://example.com",
 				"check_interval": 1,
 				"http_method": "GET",
@@ -83,9 +84,10 @@ func TestWebsiteMonitorsService_Update(t *testing.T) {
 			"success": true,
 			"data": {
 				"id": "wm123",
-				"name": "Updated Website",
-				"type": "website",
-				"status": "up",
+				"display_name": "Updated Website",
+				"monitor_type": "WebsiteMonitor",
+				"filtered_status": "up",
+				"unfiltered_status": "up",
 				"url": "https://example.com",
 				"check_interval": 5
 			}
