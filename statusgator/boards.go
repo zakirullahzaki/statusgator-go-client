@@ -28,7 +28,10 @@ type historyResponse struct {
 
 // List returns all boards with pagination.
 func (s *BoardsService) List(ctx context.Context, opts *ListOptions) ([]Board, *Pagination, error) {
-	path := addQueryParams("/boards", opts.Values())
+	path := "/boards"
+	if opts != nil {
+		path = addQueryParams(path, opts.Values())
+	}
 
 	body, err := s.client.get(ctx, path)
 	if err != nil {
